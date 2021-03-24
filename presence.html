@@ -1,0 +1,582 @@
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+		<style>
+            body{
+                margin: 30px;
+                width: 650px;
+            }
+            .Bar{
+                border: 1px solid black;
+                border-color: black;
+                border-radius: 10px 10px 10px 10px;
+                display: flex;
+                flex-direction: row;
+            }
+            #Top{
+                display: flex;
+                flex-direction: column;
+            }
+            #First{
+                display: flex;
+                flex-direction: row;
+                flex: auto;
+                order: 0;
+            }
+            #FirstSeparation{
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            #Compagny{
+                flex: 0 1 auto;
+                order: 0;
+            }
+            .CompagnyBar{
+                border: 1px solid black;
+                border-color: black;
+                border-radius: 19px 19px 19px 19px;
+                display: flex;
+                flex-direction: row;
+            }
+            #Logo{
+                padding-left: 10px; 
+                padding-top: 5px; 
+                padding-bottom: 5px;
+            }
+            #Adress{
+                padding-top: 10px;
+                padding-right: 10px;
+                text-align: center;
+            }
+            #SeparationTopTitle{
+                padding-bottom: 30px;
+                order: 1;
+            }
+            #Title{
+                flex: 1 1 auto;
+                display: flex;
+                flex-direction: column;
+                order: 1;
+            }
+            #SeparationBottomTitle{
+                padding-top: 30px;
+                order: 3;
+            }
+            #TitleText{
+                padding-top: 10px;
+                padding-bottom: 10px;
+                order: 2;
+            }
+            #Second{
+                padding-top: 5px;
+                padding-bottom: 10px;
+                display: flex;
+                flex-direction: row;
+                flex: auto;
+                order: 1;
+            }
+            #UsagerName{
+                padding-left: 10px;
+                padding-top: 5px;
+                padding-bottom: 10px;
+                flex: auto;
+                order: 0;
+                cursor: text;
+            }
+            #UsagerFirstName{
+                display: inline;
+            }
+            #UsagerLastName{
+                display: inline;
+            }
+            #SecondSeparation{
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+            #EmployeeName{
+                padding-left: 10px;
+                padding-top: 5px;
+                padding-bottom: 10px;
+                flex: auto;
+                order: 1;
+                cursor: text;
+            }
+            #PresenceArray{
+                
+            }
+            #TableHead{
+                height: 20px;
+                text-align: center;
+                vertical-align: bottom;
+            }
+            .TableCell{
+                cursor: text;
+                text-align: center;
+            }
+            .TableCellUnauthorized{
+                cursor: not-allowed;
+                text-align: center;
+            }
+            #Satursday{
+                background-color: RGB(191,191,191);
+            }
+            #Sunday{
+                background-color: RGB(128,128,128);
+            }
+            table{
+                border-collapse: collapse;
+                width: 100%;
+            }
+            table, th, td{
+                border: 1px solid black;
+            }
+            #Form{
+                position: absolute;
+                top: 50%;
+                left: 1000px;
+                height: 100px;
+            }
+            #TitleMonthRename{
+                display: none;
+            }
+            #UsagerRename{
+                display: none;
+            }
+            #EmployeeRename{
+                display: none;
+            }
+            [id^=CellInputTime]{
+                display: none;
+                margin: auto;
+                padding: 0;
+            }
+            [id^=CellInputKm_]{
+                display: none;
+                margin: auto;
+                width: 56px;
+                height: 16px;
+            }
+		</style>
+	</head>
+    <body>
+        <span id="Top">
+            <span id="First">
+                <div id="Compagny" class="CompagnyBar">
+                    <div id="Logo"> 
+                        <img src="./images/logo.jpg" alt="Logo Family Sphere" width="90px">
+                    </div>
+                    <div id="Adress">
+                        <b>
+                            Family Sphere<br/>
+                            47 place Alphonse Fiquet<br/>
+                            80000 Amiens<br/>
+                            Tel : 03.22.66.30.30
+                        </b>   
+                    </div>
+                </div>
+                <div id="FirstSeparation"></div>
+                <div id="Title">
+                    <div id="SeparationTopTitle"></div>
+                    <div id="TitleText" class="Bar">
+                        <b style="margin: auto;">
+                            <div id="TitleDate"></div>
+                        </b>
+                    </div>
+                    <div id="SeparationBottomTitle"></div>
+                </div>
+            </span>
+            <span id="Second">
+                <div id="UsagerName" class="Bar" onclick="view('UsagerRename', null, null, true)"> 
+                    <b> 
+                        <div id="UsagerText"></div>
+                    </b>
+                </div>
+                <div id="SecondSeparation"></div>
+                <div id="EmployeeName" class="Bar" onclick="view('EmployeeRename', null, null, true)">
+                    <b>
+                        <div id="EmployeeText"></div>
+                    </b>
+                </div>
+            </span>
+        </span> 
+        <span id="PresenceArray"></span>
+        <script type="text/javascript">
+            console.log(" --- Created by @Ch4fik ---");
+            // Date de la fiche de présence
+            console.log("\n Setting Up Document");
+            const date = new Date();
+            let month = date.getMonth();
+            const year = date.getFullYear();
+            const days = new Date(year, month+1, 0).getDate();
+            const EmployeeName = "DEFERT Camille";
+            
+            
+            var UsagerLastName = "NOM";
+            var UsagerFirstName = "Prénom";
+            var array;
+            
+            window.onload = setUpPage();
+            window.onkeydown = function(e) {
+                if (e.key == 's') save();
+                if (e.key == 'l') load();
+                if (e.key == 'd') unsave();
+            }
+            
+            function changeMonth(diff){
+                month = date.getMonth() - diff;
+                setUpPage();
+            }
+            function setUpPage(){
+                var monthName = date.toLocaleString('fr-fr', { year: 'numeric', month: 'long' });
+                monthName = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+                document.getElementById("TitleDate").innerHTML = "Fiche de présence de " + monthName;
+
+                // Nom de l'Usager
+                var usagerNameForm = "<form action='javascript:void(0);' onsubmit='setCell(\"UsagerRename\");' style='margin: 0; display:inline'><input type='text' size='15' id='UsagerRename' value=''><input type='submit' style='display:none'></form>";
+                document.getElementById("UsagerText").innerHTML = "<u>Usager :</u> &nbsp&nbsp " + usagerNameForm + "<div id='UsagerLastName'>" + UsagerLastName + " </div><div id='UsagerFirstName'> " + UsagerFirstName ;
+
+                // Nom du Salarié
+                document.getElementById("EmployeeText").innerHTML = "<u>Salarié :</u> &nbsp&nbsp " + EmployeeName;
+
+                // Tableau des Presences
+                if (days == 29){
+                    array = [[],
+                         [],[],[],[],[],[],[],[],[],[],
+                         [],[],[],[],[],[],[],[],[],[],
+                         [],[],[],[],[],[],[],[],[],
+                         [],    
+                            ];
+                } else if (days == 30){
+                    array = [[],
+                         [],[],[],[],[],[],[],[],[],[],
+                         [],[],[],[],[],[],[],[],[],[],
+                         [],[],[],[],[],[],[],[],[],[],
+                         [],    
+                            ];
+                } else if (days == 31){
+                    array = [[],
+                         [],[],[],[],[],[],[],[],[],[],
+                         [],[],[],[],[],[],[],[],[],[],
+                         [],[],[],[],[],[],[],[],[],[],[],
+                         [],    
+                            ];
+                } else { console.log('Plus de 31 jours ????')} 
+                return createTable() && true;
+            }
+            function createTable(){
+                console.log("\n createTable()");
+                array[0][0] = "&nbsp&nbsp Date &nbsp&nbsp";
+                array[0][1] = "&nbsp&nbsp De &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp à &nbsp&nbsp";
+                array[0][2] = "&nbsp&nbsp De &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp à &nbsp&nbsp";
+                array[0][3] = "&nbsp&nbsp De &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp à &nbsp&nbsp";
+                array[0][4] = "&nbsp&nbsp Total &nbsp&nbsp<br/>&nbsp&nbsp Durée &nbsp&nbsp";
+                array[0][5] = "&nbsp&nbsp Total &nbsp&nbsp<br/>&nbsp&nbsp Km &nbsp&nbsp";
+                array[0][6] = "&nbsp&nbsp Sign. &nbsp&nbsp<br/>&nbsp&nbsp Usager &nbsp&nbsp";
+                array[0][7] = "&nbsp&nbsp Sign. &nbsp&nbsp<br/>&nbsp&nbsp Salarié(e) &nbsp&nbsp";
+
+                
+                for (var i = 0; i < days; i++){
+                    var day = new Date(year, month, i+1).toLocaleDateString('fr-FR', { weekday: 'short' });
+                    var num = new Date(year, month, i+1).toLocaleDateString('fr-FR', { day: 'numeric' });
+                    day = day.charAt(0).toUpperCase() + day.slice(1);
+                    array[i+1][0] = day + "&nbsp&nbsp" + num;
+                    for(var j = 0; j < 11; j++){
+                        array[i+1][j+1] = "";
+                    }
+                }
+                array[array.length-1][0] = "TOTAL";
+                array[array.length-1][1] = "";
+                array[array.length-1][2] = "";
+                array[array.length-1][3] = "";
+                array[array.length-1][4] = "";
+
+                var table = "<table>";
+                for(var i = 0; i < array.length-1; i++){
+                    if (i == 0) table += "<tr id='TableHead'>";
+                    else if (array[i][0].startsWith('Lun')) table += "<tr id='Monday'>";
+                    else if (array[i][0].startsWith('Mar')) table += "<tr id='Tuesday'>";
+                    else if (array[i][0].startsWith('Mer')) table += "<tr id='Wednesday'>";
+                    else if (array[i][0].startsWith('Jeu')) table += "<tr id='Thursday'>";
+                    else if (array[i][0].startsWith('Ven')) table += "<tr id='Friday'>";
+                    else if (array[i][0].startsWith('Sam')) table += "<tr id='Satursday'>";
+                    else if (array[i][0].startsWith('Dim')) table += "<tr id='Sunday'>";
+                    else table += "<tr>";
+                    for(var j = 0; j < 11; j++){
+                        var htmlCode;
+                        if (i == 0){
+                            if (j> 0 && j < 4 ){
+                                htmlCode = "<td colspan='2' id='"+i+"_"+j+"' class='TableCellUnauthorized''>";
+                            } else if (j < 8) {
+                                htmlCode = "<td id='"+i+"_"+j+"' class='TableCellUnauthorized''>";
+                            } else {
+                                continue;
+                            }
+                        } else if(j == 0){
+                            htmlCode = "<td id='"+i+"_"+j+"' class='TableCellUnauthorized''>";
+                        } else if (j > 0 && j < 7){
+                            htmlCode = "<td id='"+i+"_"+j+"' class='TableCell' onclick='view(\"CellInputTime\","+i+","+j+",true);' style='";
+                            if (j % 2 == 0){
+                                htmlCode += "border-left: 0'>";
+                            } else {
+                                htmlCode += "border-right: 0'>";
+                            }
+                            htmlCode += "<div id='cellValue'></div><form action='javascript:void(0);' onsubmit='setCell(\"CellInputTime\","+i+","+j+");' style='margin: 0;'>";
+                            htmlCode += "<input type='time' maxlength='5' size='5' id='CellInputTime_"+i+"_"+j+"' name='CellInputTime' value=''>";
+                            htmlCode += "<input type='submit' style='display:none'></form>";
+                            
+                        } else if (j == 7){
+                            htmlCode = "<td id='"+i+"_"+j+"' class='TableCellUnauthorized''>";
+                        } else if (j == 8){
+                            //htmlCode = "<td id='"+i+"_"+j+"' class='TableCell'>";
+                            htmlCode = "<td id='"+i+"_"+j+"' class='TableCell' onclick='view(\"CellInputKm\","+i+","+j+",true);'><div id='cellValue'></div><form action='javascript:void(0);' onsubmit='setCell(\"CellInputKm\","+i+","+j+");' style='margin: 0;'><input type='number' id='CellInputKm_"+i+"_"+j+"' value=''><input type='submit' style='display:none'></form>";
+                        } else if (j == 9){
+                            htmlCode = "<td id='"+i+"_"+j+"' class='TableCellUnauthorized''>";
+                        } else if (j == 10){
+                            htmlCode = "<td id='"+i+"_"+j+"' class='TableCell' onclick='view(CellInputSign,"+i+","+j+");'>";
+                        }
+                        table += htmlCode + array[i][j] + "</td>";
+                    }
+                    table += "</tr>";
+                }
+                table += "<tr><td colspan='7' class='TableCellUnauthorized''>" + array[array.length-1][0] + "</td>";
+                for(var k = 1; k < 5; k++){
+                    if (k != 4) table += "<td id='"+i+"_"+k+"' class='TableCellUnauthorized''>"  + array[array.length-1][k] + "</td>";
+                    else table += "<td id='"+i+"_"+k+"' class='TableCell'>" + array[array.length-1][k] + "</td>";
+                }
+                table += "</table>";
+                document.getElementById("PresenceArray").innerHTML = table;
+                return true;
+            }
+            function view(name, i, j, value){
+                console.log("\n view("+name+","+i+","+j+","+value+")");
+                if (name == "CellInputKm"){
+                    var elCellInputKm = document.getElementById(name+"_"+i+"_"+j);
+                    elCellInputKm.style.display = (value && 'block') || 'none';;
+                    elCellInputKm.parentElement.previousElementSibling.style.display = (!value && 'block') || 'none';
+                } else if (name == "CellInputTime"){
+                    var jStart = j;
+                    var jEnd = j;
+                    if (j % 2 == 0) jStart -= 1;
+                    if (j % 2 == 1) jEnd += 1;
+                    var elStart = document.getElementById(name+"_"+i+"_"+jStart);
+                    var elEnd = document.getElementById(name+"_"+i+"_"+jEnd);
+                    
+                    elStart.style.display = (value && 'block') || 'none';
+                    elEnd.style.display = (value && 'block') || 'none';
+                    elStart.parentElement.previousElementSibling.style.display = (!value && 'block') || 'none';
+                    elEnd.parentElement.previousElementSibling.style.display = (!value && 'block') || 'none';
+                } else if (name == "UsagerRename"){
+                    var elUsagerLastName = document.getElementById("UsagerLastName");
+                    var elUsagerFirstName = document.getElementById("UsagerFirstName");
+                    var elUsagerRename = document.getElementById(name);
+                    
+                    //debugger;
+                    elUsagerLastName.style.display = (value && 'none') || 'inline'; 
+                    elUsagerFirstName.style.display = (value && 'none') || 'inline'; 
+                    elUsagerRename.style.display = (!value && 'none') || 'inline'; 
+                    
+                }
+                
+//                name = Id.name || Id.id;
+//                console.log("\n view("+name+","+i+","+j+")");
+//                if(i !== undefined && j !== undefined){
+//                    document.getElementById("CellSubmit").setAttribute("onclick","setCell("+name+","+i+","+j+")");
+//                }   
+//                
+//                
+//                if(Id.style.display == "block") {
+//                    ModifyCell.style.display = "none";
+//                    CellInputTimeStart.style.display = "none";
+//                    CellInputTimeEnd.style.display = "none";
+//                    CellInputKm.style.display = "none";
+//                } else {
+//                    ModifyCell.style.display = "block";
+//                    Id.style.display = "block";
+//                } 
+            }
+            function setUsager(){
+                var name = document.getElementById("UsagerInput").value;
+                console.log("\n setUsager() -> "+name);
+                document.getElementById("UsagerText").innerHTML = "<u>Usager :</u> &nbsp&nbsp " + name;
+                view(UsagerRename);
+                save();
+            }
+            function setEmployee(){
+                var name = document.getElementById("EmployeeInput").value;
+                console.log("\n setEmployee() -> "+name);
+                document.getElementById("EmployeeText").innerHTML = "<u>Usager :</u> &nbsp&nbsp " + name;
+                view(EmployeeRename);
+                save();
+            }
+            function setCell(name, i, j){
+                console.log(' \n setCell('+name+','+i+','+j+')');
+                if (name == "CellInputKm"){
+                    var cell = document.getElementById(name+"_"+i+"_"+j);
+                    var km = cell.value;
+                    
+                    array[i][j] = km;
+                    cell.setAttribute("value",km);
+                    cell.parentElement.previousElementSibling.textContent = km;
+                    
+                    calc('km');
+                } else if (name == "CellInputTime"){
+                    var jStart = j;
+                    var jEnd = j;
+                    if (j % 2 == 0) jStart -= 1;
+                    if (j % 2 == 1) jEnd += 1;
+                    
+                    var cellTimeStart = document.getElementById(name+"_"+i+"_"+jStart);
+                    var cellTimeEnd = document.getElementById(name+"_"+i+"_"+jEnd);
+                    var timeStart = cellTimeStart.value;
+                    var timeEnd = cellTimeEnd.value;
+                    
+                    console.log(timeStart+" à "+timeEnd);
+                    array[i][jStart] = timeStart;
+                    array[i][jEnd] = timeEnd;
+                    cellTimeStart.parentElement.previousElementSibling.textContent = timeStart;
+                    cellTimeEnd.parentElement.previousElementSibling.textContent = timeEnd;``
+                    
+                    calc('time');
+                } else if (name == 'TitleMonth'){
+                    var titleMonth = "";
+                }
+                view(name, i, j, false);
+                return false;
+                save();
+            }
+            function calc(name){
+                var i;
+                var j;
+                // Calcul des horaires sur la journée puis sur le mois
+                if (name == "time"){
+                    for (var i = 1; i < array.length - 1; i++){
+                        if (array[i][1] == "") continue;
+                    
+                        for (var j = 1; j < 7; j += 2){
+                            if (array[i][j] == "") continue;
+                            var h1 = parseInt(array[i][j].substring(0,2)); if (h1 == 0) h1 = 00;
+                            var m1 = parseInt(array[i][j].substring(3)); if (m1 == 0) m1 = 00;
+                            var h2 = parseInt(array[i][j+1].substring(0,2)); if (h2 == 0) h2 = 00;
+                            var m2 = parseInt(array[i][j+1].substring(3)); if (m2 == 0) m2 = 00;
+                            minutes += ((h2 * 60) + m2) - ((h1 * 60) + m1);
+                            
+                            var start = array[i][j].split(":");
+                            var end = array[i][j+1].split(":");
+                            var startDate = new Date(0, 0, 0, start[0], start[1], 0);
+                            var endDate = new Date(0, 0, 0, end[0], end[1], 0);
+                            var diff = endDate.getTime() - startDate.getTime();
+                            var hours = Math.floor(diff / 1000 / 60 / 60);
+                            diff -= hours * 1000 * 60 * 60;
+                            var minutes = Math.floor(diff / 1000 / 60);
+
+                            // If using time pickers with 24 hours format, add the below line get exact hours
+                            if (hours < 0) hours = hours + 24;
+
+                            var result = (hours <= 9 ? "0" : "") + hours + ":" + (minutes <= 9 ? "0" : "") + minutes;
+                            
+                            console.log(result);
+                        }
+                        while (minutes - 60 >= 0){
+                            minutes -= 60;
+                            DayHours++;
+                        }
+                        DayMinutes = minutes;
+                        
+                        console.log(DayHours+":"+DayMinutes);
+                        if (DayHours > 0 || DayMinutes > 0){
+                            if (DayHours < 10)DayHours = '0'+DayHours;
+                            if (DayMinutes < 10)DayMinutes = '0'+DayMinutes;
+                            console.log("\n calc("+name+") -> "+DayHours+"h"+DayMinutes);
+                            array[i][7] = DayHours+":"+DayMinutes;
+                            document.getElementById(i+"_"+7).textContent = array[i][7];
+                        }
+                    }
+                    
+                    
+                    var MonthHours = 0;
+                    var MonthMinutes = 0;
+                    for (var i = 1; i < array.length - 1; i++){
+                        if (array[i][7] != ""){
+                            MonthHours += parseInt(array[i][j].substring(0,2)) || 00 ;
+                            MonthMinutes += parseInt(array[i][j].substring(3,5)) || 00;
+                            console.log("\n calc("+name+") -> "+MonthHours+"h"+MonthMinutes);
+                        }
+                    }
+                    if (MonthHours > 0 || MonthMinutes > 0){
+                        console.log("\n calc("+name+") -> "+MonthHours+"h"+MonthMinutes);
+//                        if (MonthHours < 10)MonthHours = "0" + MonthHours;
+//                        if (MonthMinutes < 10)MonthMinutes = "0" + MonthMinutes;
+                        array[i][1] = MonthHours+":"+DayMinutes;
+                        document.getElementById(i+"_"+1).textContent = array[i][1];
+                        console.log("\n calc("+name+") -> "+MonthHours+"h"+MonthMinutes);
+                    } else {
+                        console.log("Je ne devrais pas etre la !!!! ");
+                    }
+                    
+                }
+                // Total kilometrage sur le mois
+                if (name == "km"){
+                    var km = 0;
+                    for (var i = 1; i < array.length - 1; i++){
+                        if (array[i][8] != ""){
+                            km += parseInt(array[i][8]);
+                        }
+                    }
+                    console.log("\n calc("+name+") -> "+km);
+                    array[i][2] = km;
+                    document.getElementById(i+"_"+2).textContent = array[i][2];
+                }
+            }
+            function save(){
+                localStorage.setItem("FamilySpherePresence", JSON.stringify(array));
+                console.log("\n Saved in localStorage");
+            }
+            function load(){
+                if (array = JSON.parse(localStorage.getItem("FamilySpherePresence"))){
+                    for (var i = 1; i < array.length-1; i++){
+                        for(var j = 1; j < 8; j++){
+                            document.getElementById(i+"_"+j).textContent = array[i][j];
+                        }
+                    }
+                    for(var k = 1; k < 5; k++){
+                        document.getElementById(i+"_"+k).textContent = array[i][k];
+                    }
+                    console.log("\n Loaded from localStorage");
+                } else {
+                    console.log("\n Error : No save found in localStorage");
+                }
+                
+            }
+            function unsave(){
+                localStorage.removeItem("FamilySpherePresence");
+                console.log("\n Deleted from localStorage");
+            }
+            function setCookie(cname, cvalue, exdays) {
+                var d = new Date();
+                d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+                var expires = "expires="+d.toUTCString();
+                document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+            }
+            function getCookie(cname) {
+                var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for(var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            }
+            function unsetCookie(name, path, domain){
+                if(getCookie(name)) {
+                    document.cookie = name+"="+((path) ? ";path="+path:"")+((domain)?";domain="+domain:"")+";expires=Thu, 01 Jan 1970 00:00:01 GMT";
+              }
+            }
+            
+        </script>
+    </body>
+</html>
